@@ -10,7 +10,11 @@ import multer from 'multer'
 
 import { fileURLToPath } from 'url'
 import authRoutes from './routes/auth.js'
-import { register } from 'module'
+import userRoutes from './routes/users.js'
+import postRoutes from './routes/posts.js'
+import { register } from './controllers/auth.js'
+import { createPost } from './controllers/posts.js'
+import { verifyToken } from './middleware/auth.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -38,8 +42,11 @@ const upload = multer({ storage })
 // Routes with files
 
 app.post('/auth/register', upload.single('picture'), register)
+app.post('/posts', verifyToken, upload.single('picture'), createPost)
 
 app.use('/auth', authRoutes)
+app.use('/users', userRoutes)
+// app.use('/post', postRoutes)
 
 const PORT = process.env.PORT || 6001
 mongoose
