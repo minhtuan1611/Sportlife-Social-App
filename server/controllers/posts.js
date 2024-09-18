@@ -13,15 +13,15 @@ export const createPost = async (req, res) => {
       description,
       userPicturePath: user.picturePath,
       picturePath,
-      like: {},
+      likes: {},
       comments: [],
     })
     await newPost.save()
 
     const post = await Post.find()
     res.status(201).json(post)
-  } catch (error) {
-    res.status(409).json({ message: error.message })
+  } catch (err) {
+    res.status(409).json({ message: err.message })
   }
 }
 
@@ -29,8 +29,8 @@ export const getFeedPosts = async (req, res) => {
   try {
     const post = await Post.find()
     res.status(200).json(post)
-  } catch (error) {
-    res.status(404).json({ message: error.message })
+  } catch (err) {
+    res.status(404).json({ message: err.message })
   }
 }
 
@@ -39,8 +39,8 @@ export const getUserPosts = async (req, res) => {
     const { userId } = req.params
     const post = await Post.find({ userId })
     res.status(200).json(post)
-  } catch (error) {
-    res.status(404).json({ message: error.message })
+  } catch (err) {
+    res.status(404).json({ message: err.message })
   }
 }
 
@@ -57,13 +57,14 @@ export const likePost = async (req, res) => {
       post.likes.set(userId, true)
     }
 
-    const updatedPost = await Post.findByIdAnUpdate(
+    const updatedPost = await Post.findByIdAndUpdate(
       id,
       { likes: post.likes },
       { new: true }
     )
+
     res.status(200).json(updatedPost)
-  } catch (error) {
-    res.status(404).json({ message: error.message })
+  } catch (err) {
+    res.status(404).json({ message: err.message })
   }
 }
