@@ -56,7 +56,7 @@ const Form = () => {
   const isRegister = pageType === 'register'
 
   const register = async (values, onSubmitProps) => {
-    // send image to request
+    // this allows us to send form info with image
     const formData = new FormData()
     for (let value in values) {
       formData.append(value, values[value])
@@ -232,7 +232,7 @@ const Form = () => {
             />
           </Box>
 
-          {/* Button */}
+          {/* BUTTONS */}
           <Box>
             <Button
               fullWidth
@@ -262,8 +262,8 @@ const Form = () => {
               }}
             >
               {isLogin
-                ? "Don't have an account? Sign Up!"
-                : 'Already have an account? Login here!'}
+                ? "Don't have an account? Sign Up!."
+                : 'Already have an account? Login here.'}
             </Typography>
           </Box>
         </form>

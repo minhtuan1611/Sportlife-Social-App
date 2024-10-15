@@ -1,13 +1,12 @@
 import express from 'express'
 import bodyParser from 'body-parser'
 import mongoose from 'mongoose'
-import path from 'path'
-import helmet from 'helmet'
-import morgan from 'morgan'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import multer from 'multer'
-
+import helmet from 'helmet'
+import morgan from 'morgan'
+import path from 'path'
 import { fileURLToPath } from 'url'
 import authRoutes from './routes/auth.js'
 import userRoutes from './routes/users.js'
@@ -47,13 +46,16 @@ app.post('/posts', verifyToken, upload.single('picture'), createPost)
 
 app.use('/auth', authRoutes)
 app.use('/users', userRoutes)
+app.use('/posts', postRoutes)
 
 const PORT = process.env.PORT || 6001
 mongoose
-  .connect(process.env.MONGO_URL)
+  .connect(process.env.MONGO_URL, {})
   .then(() => {
     app.listen(PORT, () => console.log(`Server Port: ${PORT}`))
-    // User.insertMany(users)
-    // Post.insertMany(posts)
+
+    /* ADD DATA ONE TIME */
+    // User.insertMany(users);
+    // Post.insertMany(posts);
   })
   .catch((error) => console.log(`${error} did not connect`))
