@@ -56,7 +56,7 @@ const Navbar = () => {
             },
           }}
         >
-          Sociopedia
+          Sportlife
         </Typography>
         {isNonMobileScreens && (
           <FlexBetween
