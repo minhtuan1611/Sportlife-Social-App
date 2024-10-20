@@ -12,6 +12,7 @@ import { useSelector } from 'react-redux'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+// eslint-disable-next-line react/prop-types
 const UserWidget = ({ userId, picturePath }) => {
   const [user, setUser] = useState(null)
   const { palette } = useTheme()
@@ -92,7 +93,7 @@ const UserWidget = ({ userId, picturePath }) => {
       <Divider />
       <Box p="1rem 0">
         <FlexBetween mb="0.5rem">
-          <Typography color={medium}>Who's viewed your profile</Typography>
+          <Typography color={medium}>Whos viewed your profile</Typography>
           <Typography color={main} fontWeight="500">
             {viewedProfile}
           </Typography>

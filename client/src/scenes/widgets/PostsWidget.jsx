@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setPosts } from 'state'
 import PostWidget from './PostWidget'
 
+// eslint-disable-next-line react/prop-types
 const PostsWidget = ({ userId, isProfile = false }) => {
   const dispatch = useDispatch()
   const posts = useSelector((state) => state.posts)

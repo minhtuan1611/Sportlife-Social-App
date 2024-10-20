@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import {
   ChatBubbleOutlineOutlined,
   FavoriteBorderOutlined,
@@ -107,6 +108,18 @@ const PostWidget = ({
       )}
     </WidgetWrapper>
   )
+}
+
+PostWidget.propTypes = {
+  postId: PropTypes.string,
+  postUserId: PropTypes.string,
+  name: PropTypes.string,
+  description: PropTypes.string,
+  location: PropTypes.string,
+  picturePath: PropTypes.string,
+  userPicturePath: PropTypes.string,
+  likes: PropTypes.object,
+  comments: PropTypes.array,
 }
 
 export default PostWidget

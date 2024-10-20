@@ -1,6 +1,9 @@
 import { BrowserRouter, Navigate, Routes, Route } from 'react-router-dom'
 import HomePage from 'scenes/homePage'
 import LoginPage from 'scenes/loginPage'
+import MessagePage from 'scenes/messagePage'
+// import { AuthContextProvider } from './context/AuthContext.jsx'
+// import { SocketContextProvider } from './context/SocketContext.jsx'
 import ProfilePage from 'scenes/profilePage'
 import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
@@ -20,6 +23,12 @@ function App() {
           <CssBaseline />
           <Routes>
             <Route path="/" element={<LoginPage />} />
+
+            <Route
+              path="/messages"
+              element={isAuth ? <MessagePage /> : <Navigate to="/" />}
+            />
+
             <Route
               path="/home"
               element={isAuth ? <HomePage /> : <Navigate to="/" />}

@@ -25,6 +25,7 @@ import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { setPosts } from 'state'
 
+// eslint-disable-next-line react/prop-types
 const MyPostWidget = ({ picturePath }) => {
   const dispatch = useDispatch()
   const [isImage, setIsImage] = useState(false)

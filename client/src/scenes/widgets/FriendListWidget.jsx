@@ -5,6 +5,7 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { setFriends } from 'state'
 
+// eslint-disable-next-line react/prop-types
 const FriendListWidget = ({ userId }) => {
   const dispatch = useDispatch()
   const { palette } = useTheme()

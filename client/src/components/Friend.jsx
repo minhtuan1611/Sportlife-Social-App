@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import { PersonAddOutlined, PersonRemoveOutlined } from '@mui/icons-material'
 import { Box, IconButton, Typography, useTheme } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
@@ -76,6 +77,13 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
       </IconButton>
     </FlexBetween>
   )
+}
+
+Friend.propTypes = {
+  friendId: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  subtitle: PropTypes.string.isRequired,
+  userPicturePath: PropTypes.string.isRequired,
 }
 
 export default Friend

@@ -29,7 +29,15 @@ app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }))
 app.use(morgan('common'))
 app.use(bodyParser.json({ limit: '30mb', extended: true }))
 app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }))
-app.use(cors())
+
+// Allow requests from http://localhost:3000 and enable PATCH method
+app.use(
+  cors({
+    origin: 'http://localhost:3000',
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+  })
+)
+
 app.use('/assets', express.static(path.join(__dirname, 'public/assets')))
 
 const storage = multer.diskStorage({
