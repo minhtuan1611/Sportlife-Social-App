@@ -1,19 +1,16 @@
 import PropTypes from 'prop-types'
-// import { useState } from 'react'
-import { useAuthContext } from '../../context/AuthContext'
 import { extractTime } from '../../utils/extractTime'
 import useConversation from '../../zustand/useConversation'
+import { useSelector } from 'react-redux'
+import UserImage from '../UserImage'
 
 const Message = ({ message }) => {
-  const { authUser } = useAuthContext()
+  const { _id, picturePath } = useSelector((state) => state.user)
   const { selectedConversation } = useConversation()
-  const fromMe = message.senderId === authUser._id
+  const fromMe = message.senderId === _id
   const formattedTime = extractTime(message.createdAt)
-  const profilePic = fromMe
-    ? authUser.profilePic
-    : selectedConversation?.profilePic
+  const profilePicc = fromMe ? picturePath : selectedConversation?.picturePath
   const bubbleBgColor = fromMe ? 'blue' : 'white'
-
   const shakeClass = message.shouldShake ? 'shake' : ''
 
   return fromMe ? (
@@ -24,15 +21,11 @@ const Message = ({ message }) => {
         </div>
         <div className="chat-time">{formattedTime}</div>
       </div>
-      <div className="chat-avatar">
-        <img alt="user picture" src={profilePic} />
-      </div>
+      <UserImage image={profilePicc} size="40px" style={{ padding: '10px' }} />
     </div>
   ) : (
     <div className="chat chat-start">
-      <div className="chat-avatar">
-        <img alt="user picture" src={profilePic} />
-      </div>
+      <UserImage image={profilePicc} size="40px" style={{ padding: '10px' }} />
       <div className="chat-message-container">
         <div className={`chat-message ${bubbleBgColor} ${shakeClass}`}>
           {message.message}

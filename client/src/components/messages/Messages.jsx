@@ -2,11 +2,10 @@ import { useEffect, useRef } from 'react'
 import useGetMessages from '../../hooks/useGetMessages'
 import MessageSkeleton from '../skeletons/MessageSkeleton'
 import Message from './Message'
-import useListenMessages from '../../hooks/useListenMessages'
 
+// eslint-disable-next-line react/prop-types
 const Messages = () => {
   const { messages, loading } = useGetMessages()
-  useListenMessages()
   const lastMessageRef = useRef()
 
   useEffect(() => {
@@ -19,8 +18,11 @@ const Messages = () => {
     <div className="messages">
       {!loading &&
         messages.length > 0 &&
-        messages.map((message) => (
-          <div key={message._id} ref={lastMessageRef}>
+        messages.map((message, idx) => (
+          <div
+            key={message._id}
+            ref={idx === messages.length - 1 ? lastMessageRef : null}
+          >
             <Message message={message} />
           </div>
         ))}
@@ -34,4 +36,5 @@ const Messages = () => {
     </div>
   )
 }
+
 export default Messages

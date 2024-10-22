@@ -32,16 +32,13 @@ body,
   --chat-message-white: rgb(44, 46, 80);
 }
 
-body {
-  background: var(--background-color) no-repeat center/cover;
-}
-
 .chat-app {
   padding: 1rem;
-  height: 90vh;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: #2779bd;
 }
 
 .container {
@@ -102,8 +99,8 @@ body {
 .conversation {
   display: flex;
   gap: 0.5rem;
-  align-items: center;
-  padding: 0.5rem 1rem;
+  align-items: center; /* Vertically center the child elements */
+  padding: 0.5rem 0.5rem;
   cursor: pointer;
   border-radius: 0.25rem;
 }
@@ -112,6 +109,21 @@ body {
   display: flex;
   flex-direction: column;
   flex: 1;
+  height: 60px;
+  width: 60px;
+  justify-content: center;
+}
+
+.details-top {
+  margin-bottom: 0rem;
+}
+
+.message-content {
+  width: 100%; /* or any specific width you want */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: -1rem;
 }
 
 .conversation:hover {
@@ -302,7 +314,7 @@ body {
   border: 1px solid #4a5568;
   border-radius: 0.375rem;
   padding: 0.625rem;
-  width: 95%;
+  width: 100%;
   background-color: #363e49;
   color: #fff;
 }
@@ -358,6 +370,8 @@ body {
 .chat-message-container {
   display: flex;
   flex-direction: column;
+  margin-left: 5px;
+  margin-right: 5px;
 }
 
 .chat-time {

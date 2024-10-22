@@ -3,13 +3,12 @@ import useConversation from '../../zustand/useConversation'
 import MessageInput from './MessageInput'
 import Messages from './Messages'
 import { TiMessages } from 'react-icons/ti'
-import { useAuthContext } from '../../context/AuthContext'
+import { useSelector } from 'react-redux'
 
 const MessageContainer = () => {
   const { selectedConversation, setSelectedConversation } = useConversation()
 
   useEffect(() => {
-    // cleanup function (unmounts)
     return () => setSelectedConversation(null)
   }, [setSelectedConversation])
 
@@ -19,7 +18,6 @@ const MessageContainer = () => {
         <NoChatSelected />
       ) : (
         <>
-          {/* Header */}
           <div className="message-header">
             <span className="label-text">To: </span>
             <span className="text-color">{selectedConversation.firstName}</span>
@@ -34,11 +32,12 @@ const MessageContainer = () => {
 export default MessageContainer
 
 const NoChatSelected = () => {
-  const { authUser } = useAuthContext()
+  const { firstName } = useSelector((state) => state.user)
+
   return (
     <div className="welcome-message">
       <div className="welcome-message-content">
-        <p>Welcome 👋 {authUser.firstName} ❄</p>
+        <p>Welcome 👋 {firstName} ❄</p>
         <p>Select a chat to start messaging</p>
         <TiMessages className="welcome-message-icon" />
       </div>

@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import { IoSearchSharp } from 'react-icons/io5'
 import useConversation from '../../zustand/useConversation'
-import useGetConversations from '../../hooks/useGetConversations'
+import { useSelector } from 'react-redux'
 import toast from 'react-hot-toast'
 
 const SearchInput = () => {
   const [search, setSearch] = useState('')
   const { setSelectedConversation } = useConversation()
-  const { conversations } = useGetConversations()
+  const conversations = useSelector((state) => state.user.friends)
 
   const handleSubmit = (e) => {
     e.preventDefault()

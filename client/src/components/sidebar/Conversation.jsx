@@ -1,35 +1,32 @@
 import PropTypes from 'prop-types'
-import { useSocketContext } from '../../context/SocketContext'
-import useConversation from '../../zustand/useConversation'
-
-const Conversation = ({ conversation, lastIdx, emoji }) => {
-  const { selectedConversation, setSelectedConversation } = useConversation()
-
-  const isSelected = selectedConversation?._id === conversation._id
-  const { onlineUsers } = useSocketContext()
-  const isOnline = onlineUsers.includes(conversation._id)
-
+import UserImage from '../UserImage'
+import { getTimeDifference, truncateMessage } from '../../utils/message'
+const Conversation = ({
+  conversation,
+  lastMessage,
+  isSelected,
+  setSelectedConversation,
+  isLast,
+}) => {
   return (
     <>
       <div
         className={`conversation ${isSelected ? 'selected' : ''}`}
         onClick={() => setSelectedConversation(conversation)}
       >
-        <div className={`avatar ${isOnline ? 'online' : ''}`}>
-          <div className="avatar-img">
-            <img src={conversation.profilePic} alt="user avatar" />
-          </div>
-        </div>
-
+        <UserImage image={conversation.picturePath} size="55px" />
         <div className="conversation-details">
           <div className="details-top">
             <p className="font">{conversation.firstName}</p>
-            <span className="emoji">{emoji}</span>
           </div>
+          <p className="message-content">
+            {lastMessage ? truncateMessage(lastMessage.message) : ''}
+            {lastMessage ? getTimeDifference(lastMessage.createdAt) : ''}
+          </p>
         </div>
       </div>
 
-      {!lastIdx && <div className="divider" />}
+      {!isLast && <div className="divider" />}
     </>
   )
 }
@@ -37,11 +34,13 @@ const Conversation = ({ conversation, lastIdx, emoji }) => {
 Conversation.propTypes = {
   conversation: PropTypes.shape({
     _id: PropTypes.string.isRequired,
-    profilePic: PropTypes.string.isRequired,
+    picturePath: PropTypes.string.isRequired,
     firstName: PropTypes.string.isRequired,
   }).isRequired,
-  lastIdx: PropTypes.number,
-  emoji: PropTypes.string,
+  lastMessage: PropTypes.object,
+  isSelected: PropTypes.bool.isRequired,
+  setSelectedConversation: PropTypes.func.isRequired,
+  isLast: PropTypes.bool.isRequired,
 }
 
 export default Conversation

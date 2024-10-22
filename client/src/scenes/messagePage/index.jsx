@@ -3,9 +3,11 @@ import Sidebar from '../../components/sidebar/Sidebar'
 
 const Home = () => {
   return (
-    <div className="container ">
-      <Sidebar />
-      <MessageContainer />
+    <div className="chat-app">
+      <div className="container ">
+        <Sidebar />
+        <MessageContainer />
+      </div>
     </div>
   )
 }

@@ -1,20 +1,18 @@
 import { useEffect, useState } from 'react'
-import useConversation from '../zustand/useConversation'
 import toast from 'react-hot-toast'
 import { useSelector } from 'react-redux'
 
-const useGetMessages = () => {
+const useGetLastMessage = (conversationId) => {
   const [loading, setLoading] = useState(false)
-  const { messages, setMessages, selectedConversation } = useConversation()
+  const [lastMessage, setLastMessage] = useState(null)
   const token = useSelector((state) => state.token)
 
   useEffect(() => {
-    const getMessages = async () => {
+    const getLastMessage = async () => {
       setLoading(true)
       try {
         const res = await fetch(
-          `http://localhost:3001/messages/${selectedConversation._id}`,
-          // add authorization
+          `http://localhost:3001/messages/${conversationId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -23,7 +21,7 @@ const useGetMessages = () => {
         )
         const data = await res.json()
         if (data.error) throw new Error(data.error)
-        setMessages(data)
+        setLastMessage(data.length > 0 ? data[data.length - 1] : null)
       } catch (error) {
         toast.error(error.message)
       } finally {
@@ -31,11 +29,12 @@ const useGetMessages = () => {
       }
     }
 
-    if (selectedConversation?._id) {
-      getMessages()
+    if (conversationId) {
+      getLastMessage()
     }
-  }, [selectedConversation._id, setMessages, token])
+  }, [conversationId, token])
 
-  return { messages, loading }
+  return { lastMessage, loading }
 }
-export default useGetMessages
+
+export default useGetLastMessage
