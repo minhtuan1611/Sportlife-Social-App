@@ -5,7 +5,15 @@ import {
   FavoriteOutlined,
   ShareOutlined,
 } from '@mui/icons-material'
-import { Box, Divider, IconButton, Typography, useTheme } from '@mui/material'
+import {
+  Box,
+  Divider,
+  IconButton,
+  Typography,
+  useTheme,
+  InputBase,
+  Button,
+} from '@mui/material'
 import FlexBetween from 'components/FlexBetween'
 import Friend from 'components/Friend'
 import WidgetWrapper from 'components/WidgetWrapper'
@@ -25,6 +33,7 @@ const PostWidget = ({
   comments,
 }) => {
   const [isComments, setIsComments] = useState(false)
+  const [newComment, setNewComment] = useState('')
   const dispatch = useDispatch()
   const token = useSelector((state) => state.token)
   const loggedInUserId = useSelector((state) => state.user._id)
@@ -46,6 +55,23 @@ const PostWidget = ({
     })
     const updatedPost = await response.json()
     dispatch(setPost({ post: updatedPost }))
+  }
+
+  const handleCommentSubmit = async () => {
+    const response = await fetch(
+      `http://localhost:3001/posts/${postId}/comment`,
+      {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId: loggedInUserId, comment: newComment }),
+      }
+    )
+    const updatedPost = await response.json()
+    dispatch(setPost({ post: updatedPost }))
+    setNewComment('')
   }
 
   return (
@@ -99,11 +125,36 @@ const PostWidget = ({
             <Box key={`${name}-${i}`}>
               <Divider />
               <Typography sx={{ color: main, m: '0.5rem 0', pl: '1rem' }}>
-                {comment}
+                {comment.comment}
               </Typography>
             </Box>
           ))}
           <Divider />
+          <FlexBetween mt="1rem">
+            <InputBase
+              placeholder="Add a comment..."
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              sx={{
+                width: '100%',
+                backgroundColor: palette.neutral.light,
+                borderRadius: '2rem',
+                padding: '0.5rem 1rem',
+              }}
+            />
+            <Button
+              disabled={!newComment}
+              onClick={handleCommentSubmit}
+              sx={{
+                color: palette.background.alt,
+                backgroundColor: palette.primary.main,
+                borderRadius: '3rem',
+                marginLeft: '1rem',
+              }}
+            >
+              Post
+            </Button>
+          </FlexBetween>
         </Box>
       )}
     </WidgetWrapper>
@@ -119,7 +170,12 @@ PostWidget.propTypes = {
   picturePath: PropTypes.string,
   userPicturePath: PropTypes.string,
   likes: PropTypes.object,
-  comments: PropTypes.array,
+  comments: PropTypes.arrayOf(
+    PropTypes.shape({
+      userId: PropTypes.string,
+      comment: PropTypes.string,
+    })
+  ),
 }
 
 export default PostWidget
