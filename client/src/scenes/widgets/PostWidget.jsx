@@ -170,12 +170,7 @@ PostWidget.propTypes = {
   picturePath: PropTypes.string,
   userPicturePath: PropTypes.string,
   likes: PropTypes.object,
-  comments: PropTypes.arrayOf(
-    PropTypes.shape({
-      userId: PropTypes.string,
-      comment: PropTypes.string,
-    })
-  ),
+  comments: PropTypes.any,
 }
 
 export default PostWidget

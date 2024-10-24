@@ -1,10 +1,11 @@
 import { useEffect, useRef } from 'react'
 import useGetMessages from '../../hooks/useGetMessages'
-import MessageSkeleton from '../skeletons/MessageSkeleton'
+import MessageSkeleton from '../skeletons'
 import Message from './Message'
 
 // eslint-disable-next-line react/prop-types
 const Messages = () => {
+  // Destructure the props
   const { messages, loading } = useGetMessages()
   const lastMessageRef = useRef()
 

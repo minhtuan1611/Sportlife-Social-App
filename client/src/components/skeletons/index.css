@@ -1,0 +1,53 @@
+/* Add this to your CSS file */
+.skeleton {
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  animation: skeleton-loading 1.2s infinite ease-in-out;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-color: #e0e0e0;
+  }
+  50% {
+    background-color: #cfcfcf;
+  }
+  100% {
+    background-color: #e0e0e0;
+  }
+}
+
+.skeleton-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.skeleton-line {
+  height: 16px;
+  width: 100px;
+  margin: 4px 0;
+}
+
+.skeleton-line.short {
+  width: 60px;
+}
+
+.flex {
+  display: flex;
+  align-items: center;
+}
+
+.gap-3 {
+  gap: 12px;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}

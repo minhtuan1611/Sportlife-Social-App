@@ -16,10 +16,10 @@ export const getTimeDifference = (timestamp) => {
 }
 
 export const truncateMessage = (message) => {
-  const maxLength = 15 // Define your maximum length here
+  const maxLength = 20 // Define your maximum length here
   if (message.length > maxLength) {
-    return message.substring(0, maxLength - 3) + '...'
+    return message.substring(0, maxLength - 3) + '... '
   } else {
-    return message
+    return message + ' '
   }
 }

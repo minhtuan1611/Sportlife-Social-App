@@ -28,8 +28,6 @@ const FriendListWidget = ({ userId }) => {
     getFriends()
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  console.log(friends)
-
   return (
     <WidgetWrapper>
       <Typography

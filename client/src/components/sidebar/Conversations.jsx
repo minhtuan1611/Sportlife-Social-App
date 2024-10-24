@@ -3,10 +3,14 @@ import Conversation from './Conversation'
 import { useSelector } from 'react-redux'
 import useConversation from '../../zustand/useConversation'
 import useGetLastMessage from '../../hooks/useGetLastMessage'
+import { createTheme } from '@mui/material/styles'
+import { themeSettings } from 'theme'
 
 const Conversations = () => {
   const conversations = useSelector((state) => state.user.friends)
+  const mode = useSelector((state) => state.mode)
   const { selectedConversation, setSelectedConversation } = useConversation()
+  const theme = createTheme(themeSettings(mode))
 
   return (
     <div className="conversations">
@@ -17,6 +21,7 @@ const Conversations = () => {
           selectedConversation={selectedConversation}
           setSelectedConversation={setSelectedConversation}
           isLast={idx === conversations.length - 1}
+          color={theme.palette.primary.light}
         />
       ))}
     </div>
@@ -28,6 +33,7 @@ const ConversationWrapper = ({
   selectedConversation,
   setSelectedConversation,
   isLast,
+  color,
 }) => {
   const { lastMessage, loading } = useGetLastMessage(conversation._id)
   const isSelected = selectedConversation?._id === conversation._id
@@ -40,6 +46,7 @@ const ConversationWrapper = ({
       setSelectedConversation={setSelectedConversation}
       isLast={isLast}
       loading={loading}
+      color={color}
     />
   )
 }
@@ -50,6 +57,7 @@ ConversationWrapper.propTypes = {
   selectedConversation: PropTypes.object,
   setSelectedConversation: PropTypes.func.isRequired,
   isLast: PropTypes.bool.isRequired,
+  color: PropTypes.string.isRequired,
 }
 
 export default Conversations

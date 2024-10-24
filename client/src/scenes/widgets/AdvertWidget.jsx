@@ -1,4 +1,4 @@
-import { Typography, useTheme } from '@mui/material'
+import { Typography, useTheme, Link } from '@mui/material'
 import FlexBetween from 'components/FlexBetween'
 import WidgetWrapper from 'components/WidgetWrapper'
 
@@ -16,16 +16,30 @@ const AdvertWidget = () => {
         </Typography>
         <Typography color={medium}>Create Ad</Typography>
       </FlexBetween>
-      <img
-        width="100%"
-        height="auto"
-        alt="advert"
-        src="http://localhost:3001/assets/info4.jpeg"
-        style={{ borderRadius: '0.75rem', margin: '0.75rem 0' }}
-      />
+      <Link
+        href="https://www.linkedin.com/in/tuan-nguyen1611/"
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ display: 'block', textDecoration: 'none' }}
+      >
+        <img
+          width="100%"
+          height="auto"
+          alt="advert"
+          src="http://localhost:3001/assets/info4.jpeg"
+          style={{ borderRadius: '0.75rem', margin: '0.75rem 0' }}
+        />
+      </Link>
       <FlexBetween>
         <Typography color={main}>Udemy</Typography>
-        <Typography color={medium}>udemy.com</Typography>
+        <Link
+          href="https://www.linkedin.com/in/minh-tuan-nguyen-91761a1a4/"
+          color={medium}
+          target="_blank" // Open the link in a new tab
+          rel="noopener noreferrer"
+        >
+          udemy.com
+        </Link>
       </FlexBetween>
       <Typography color={medium} m="0.5rem 0">
         Investing In Stocks The Complete Course! (17+ Hours)
