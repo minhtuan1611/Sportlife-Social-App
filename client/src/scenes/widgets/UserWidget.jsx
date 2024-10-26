@@ -12,6 +12,8 @@ import { useSelector } from 'react-redux'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+const REACT_APP_SERVER = process.env.REACT_APP_SERVER
+
 // eslint-disable-next-line react/prop-types
 const UserWidget = ({ userId, picturePath }) => {
   const [user, setUser] = useState(null)
@@ -23,7 +25,7 @@ const UserWidget = ({ userId, picturePath }) => {
   const main = palette.neutral.main
 
   const getUser = async () => {
-    const response = await fetch(`http://localhost:3001/users/${userId}`, {
+    const response = await fetch(`${REACT_APP_SERVER}/users/${userId}`, {
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` },
     })

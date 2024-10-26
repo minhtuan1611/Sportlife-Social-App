@@ -25,6 +25,8 @@ import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { setPosts } from 'state'
 
+const REACT_APP_SERVER = process.env.REACT_APP_SERVER
+
 // eslint-disable-next-line react/prop-types
 const MyPostWidget = ({ picturePath }) => {
   const dispatch = useDispatch()
@@ -47,7 +49,7 @@ const MyPostWidget = ({ picturePath }) => {
       formData.append('picturePath', image.name)
     }
 
-    const response = await fetch(`http://localhost:3001/posts`, {
+    const response = await fetch(`${REACT_APP_SERVER}/posts`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}` },
       body: formData,

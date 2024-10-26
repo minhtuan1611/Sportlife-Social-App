@@ -3,6 +3,8 @@ import useConversation from '../zustand/useConversation'
 import toast from 'react-hot-toast'
 import { useSelector } from 'react-redux'
 
+const REACT_APP_SERVER = process.env.REACT_APP_SERVER
+
 const useSendMessage = () => {
   const [loading, setLoading] = useState(false)
   const { messages, setMessages, selectedConversation } = useConversation()
@@ -12,7 +14,7 @@ const useSendMessage = () => {
     setLoading(true)
     try {
       const res = await fetch(
-        `http://localhost:3001/messages/send/${selectedConversation._id}`,
+        `${REACT_APP_SERVER}/messages/send/${selectedConversation._id}`,
         {
           method: 'POST',
           headers: {

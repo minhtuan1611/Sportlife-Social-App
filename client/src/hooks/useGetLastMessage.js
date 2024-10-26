@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useSelector } from 'react-redux'
 
+const REACT_APP_SERVER = process.env.REACT_APP_SERVER
+
 const useGetLastMessage = (conversationId) => {
   const [loading, setLoading] = useState(false)
   const [lastMessage, setLastMessage] = useState(null)
@@ -12,7 +14,7 @@ const useGetLastMessage = (conversationId) => {
       setLoading(true)
       try {
         const res = await fetch(
-          `http://localhost:3001/messages/${conversationId}`,
+          `${REACT_APP_SERVER}/messages/${conversationId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
