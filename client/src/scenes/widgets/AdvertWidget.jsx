@@ -1,6 +1,6 @@
 import { Typography, useTheme, Link } from '@mui/material'
-import FlexBetween from 'components/FlexBetween'
-import WidgetWrapper from 'components/WidgetWrapper'
+import FlexBetween from '../../components/FlexBetween'
+import WidgetWrapper from '../../components/WidgetWrapper'
 
 const REACT_APP_SERVER = process.env.REACT_APP_SERVER
 
@@ -9,7 +9,6 @@ const AdvertWidget = () => {
   const dark = palette.neutral.dark
   const main = palette.neutral.main
   const medium = palette.neutral.medium
-  const imgUrl = `${REACT_APP_SERVER}/assets/info4.jpeg`
 
   return (
     <WidgetWrapper>
@@ -29,7 +28,7 @@ const AdvertWidget = () => {
           width="100%"
           height="auto"
           alt="advert"
-          src={{ imgUrl }}
+          src={`${REACT_APP_SERVER}/assets/info4.jpeg`}
           style={{ borderRadius: '0.75rem', margin: '0.75rem 0' }}
         />
       </Link>
@@ -41,7 +40,7 @@ const AdvertWidget = () => {
           target="_blank" // Open the link in a new tab
           rel="noopener noreferrer"
         >
-          udemy.com
+          Udemy.com
         </Link>
       </FlexBetween>
       <Typography color={medium} m="0.5rem 0">

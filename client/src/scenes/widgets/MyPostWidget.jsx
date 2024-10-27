@@ -17,13 +17,14 @@ import {
   IconButton,
   useMediaQuery,
 } from '@mui/material'
-import FlexBetween from 'components/FlexBetween'
 import Dropzone from 'react-dropzone'
-import UserImage from 'components/UserImage'
-import WidgetWrapper from 'components/WidgetWrapper'
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { setPosts } from 'state'
+
+import WidgetWrapper from 'components/WidgetWrapper'
+import FlexBetween from '../../components/FlexBetween'
+import UserImage from '../../components/UserImage'
 
 const REACT_APP_SERVER = process.env.REACT_APP_SERVER
 
@@ -98,6 +99,7 @@ const MyPostWidget = ({ picturePath }) => {
                   sx={{ '&:hover': { cursor: 'pointer' } }}
                 >
                   <input {...getInputProps()} />
+
                   {!image ? (
                     <p>Add Image Here</p>
                   ) : (

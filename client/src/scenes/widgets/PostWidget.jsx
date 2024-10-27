@@ -14,12 +14,12 @@ import {
   InputBase,
   Button,
 } from '@mui/material'
-import FlexBetween from 'components/FlexBetween'
-import Friend from 'components/Friend'
-import WidgetWrapper from 'components/WidgetWrapper'
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { setPost } from 'state'
+import WidgetWrapper from '../../components/WidgetWrapper'
+import FlexBetween from '../../components/FlexBetween'
+import Friend from '../../components/Friend'
 
 const REACT_APP_SERVER = process.env.REACT_APP_SERVER
 

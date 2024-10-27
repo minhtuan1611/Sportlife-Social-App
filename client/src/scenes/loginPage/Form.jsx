@@ -81,7 +81,6 @@ const Form = () => {
   }
 
   const login = async (values, onSubmitProps) => {
-    console.log(`${REACT_APP_SERVER}/auth/login`)
     const loggedInResponse = await fetch(`${REACT_APP_SERVER}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

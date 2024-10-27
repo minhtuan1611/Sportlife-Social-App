@@ -30,9 +30,11 @@ app.use(morgan('common'))
 app.use(bodyParser.json({ limit: '30mb', extended: true }))
 app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }))
 
+const REACT_APP_CLIENT = process.env.REACT_APP_CLIENT
+
 app.use(
   cors({
-    origin: 'http://localhost:3000',
+    origin: REACT_APP_CLIENT,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   })
 )

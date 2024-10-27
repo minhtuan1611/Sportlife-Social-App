@@ -5,12 +5,12 @@ import {
   WorkOutlineOutlined,
 } from '@mui/icons-material'
 import { Box, Typography, Divider, useTheme, Link } from '@mui/material'
-import UserImage from 'components/UserImage'
-import FlexBetween from 'components/FlexBetween'
-import WidgetWrapper from 'components/WidgetWrapper'
 import { useSelector } from 'react-redux'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import UserImage from '../../components/UserImage'
+import FlexBetween from '../../components/FlexBetween'
+import WidgetWrapper from '../../components/WidgetWrapper'
 
 const REACT_APP_SERVER = process.env.REACT_APP_SERVER
 
