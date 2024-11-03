@@ -1,6 +1,6 @@
 .chat-app {
   padding: 1rem;
-  height: 92.8vh;
+  height: calc(100vh);
   display: flex;
   align-items: center;
   justify-content: center;

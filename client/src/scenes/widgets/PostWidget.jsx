@@ -3,7 +3,6 @@ import {
   ChatBubbleOutlineOutlined,
   FavoriteBorderOutlined,
   FavoriteOutlined,
-  ShareOutlined,
 } from '@mui/icons-material'
 import {
   Box,
@@ -116,10 +115,6 @@ const PostWidget = ({
             <Typography>{comments.length}</Typography>
           </FlexBetween>
         </FlexBetween>
-
-        <IconButton>
-          <ShareOutlined />
-        </IconButton>
       </FlexBetween>
       {isComments && (
         <Box mt="0.5rem">

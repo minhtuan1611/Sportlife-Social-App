@@ -10,16 +10,7 @@ import {
   useTheme,
   useMediaQuery,
 } from '@mui/material'
-import {
-  Search,
-  Message,
-  DarkMode,
-  LightMode,
-  Notifications,
-  Help,
-  Menu,
-  Close,
-} from '@mui/icons-material'
+import { Message, DarkMode, LightMode, Menu, Close } from '@mui/icons-material'
 import { useDispatch, useSelector } from 'react-redux'
 import { setMode, setLogout } from 'state'
 import { useNavigate } from 'react-router-dom'
@@ -42,7 +33,14 @@ const Navbar = () => {
   const fullName = `${user.firstName} ${user.lastName}`
 
   return (
-    <FlexBetween padding="1rem 6%" backgroundColor={alt}>
+    <FlexBetween
+      padding="1rem 6%"
+      backgroundColor={alt}
+      position="fixed"
+      top="0"
+      width="100%"
+      zIndex="1100"
+    >
       <FlexBetween gap="1.75rem">
         <Typography
           fontWeight="bold"
@@ -58,19 +56,6 @@ const Navbar = () => {
         >
           Sportlife
         </Typography>
-        {isNonMobileScreens && (
-          <FlexBetween
-            backgroundColor={neutralLight}
-            borderRadius="9px"
-            gap="3rem"
-            padding="0.1rem 1.5rem"
-          >
-            <InputBase placeholder="Search..." />
-            <IconButton>
-              <Search />
-            </IconButton>
-          </FlexBetween>
-        )}
       </FlexBetween>
 
       {/* DESKTOP NAV */}
@@ -124,8 +109,7 @@ const Navbar = () => {
           bottom="0"
           height="100%"
           zIndex="10"
-          maxWidth="500px"
-          minWidth="300px"
+          width="30%"
           backgroundColor={background}
         >
           {/* CLOSE ICON */}
@@ -155,9 +139,9 @@ const Navbar = () => {
                 <LightMode sx={{ color: dark, fontSize: '25px' }} />
               )}
             </IconButton>
-            <Message sx={{ fontSize: '25px' }} />
-            <Notifications sx={{ fontSize: '25px' }} />
-            <Help sx={{ fontSize: '25px' }} />
+            <IconButton onClick={() => navigate('/messages')}>
+              <Message sx={{ color: dark, fontSize: '25px' }} />
+            </IconButton>
             <FormControl variant="standard" value={fullName}>
               <Select
                 value={fullName}

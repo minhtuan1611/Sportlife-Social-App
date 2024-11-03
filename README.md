@@ -79,8 +79,8 @@ Ensure the `.env` file in the client folder includes:
 
 4. The following default admin user is created:
 
-   - **Email:** tuan.mn51@gmail.com
-   - **Password:** 1234
+   - **Email:** guestaccount@gmail.com
+   - **Password:** icanbuildeverything
 
 ## List of Implemented Features
 

@@ -7,7 +7,6 @@ import toast from 'react-hot-toast'
 // eslint-disable-next-line react/prop-types
 const SearchInput = ({ color, colorHover }) => {
   const [search, setSearch] = useState('')
-  const [isHovered, setIsHovered] = useState(false)
   const { setSelectedConversation } = useConversation()
   const conversations = useSelector((state) => state.user.friends)
 
@@ -29,24 +28,56 @@ const SearchInput = ({ color, colorHover }) => {
   }
 
   return (
-    <form className="search-form" onSubmit={handleSubmit}>
+    <form
+      className="search-form"
+      onSubmit={handleSubmit}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        padding: '0.5rem',
+        borderRadius: '1rem',
+        backgroundColor: '#f0f0f0',
+        boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.2)',
+        marginBottom: '1rem',
+      }}
+    >
       <input
         type="text"
         placeholder="Search…"
         className="search-input"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
+        style={{
+          height: '2.5rem',
+          padding: '0.5rem 1rem',
+          border: 'none',
+          outline: 'none',
+          flexGrow: 1,
+          borderRadius: '1rem 0 0 1rem',
+          backgroundColor: 'transparent',
+        }}
       />
       <button
         type="submit"
         className="search-btn"
         style={{
-          backgroundColor: isHovered ? colorHover : color,
+          backgroundColor: color,
+          color: '#fff',
+          border: 'none',
+          height: '2.5rem',
+          width: '2.5rem',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: '0 1rem 1rem 0',
+          transition: 'background-color 0.3s',
         }}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        onMouseEnter={(e) =>
+          (e.currentTarget.style.backgroundColor = colorHover)
+        }
+        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = color)}
       >
-        <IoSearchSharp className="search-icon" />
+        <IoSearchSharp />
       </button>
     </form>
   )

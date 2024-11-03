@@ -37,6 +37,7 @@ const ProfilePage = () => {
       <Box
         width="100%"
         padding="2rem 6%"
+        paddingTop="5.5rem"
         display={isNonMobileScreens ? 'flex' : 'block'}
         gap="2rem"
         justifyContent="center"

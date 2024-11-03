@@ -1,9 +1,4 @@
-import {
-  ManageAccountsOutlined,
-  EditOutlined,
-  LocationOnOutlined,
-  WorkOutlineOutlined,
-} from '@mui/icons-material'
+import { LocationOnOutlined, WorkOutlineOutlined } from '@mui/icons-material'
 import { Box, Typography, Divider, useTheme, Link } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { useEffect, useState } from 'react'
@@ -69,7 +64,6 @@ const UserWidget = ({ userId, picturePath }) => {
             <Typography color={medium}>{friends.length} friends</Typography>
           </Box>
         </FlexBetween>
-        <ManageAccountsOutlined />
       </FlexBetween>
 
       <Divider />
@@ -104,7 +98,6 @@ const UserWidget = ({ userId, picturePath }) => {
               </Link>
             </Box>
           </FlexBetween>
-          <EditOutlined sx={{ color: main }} />
         </FlexBetween>
 
         <FlexBetween gap="1rem" mb="0.5rem">
@@ -119,7 +112,6 @@ const UserWidget = ({ userId, picturePath }) => {
               </Link>
             </Box>
           </FlexBetween>
-          <EditOutlined sx={{ color: main }} />
         </FlexBetween>
       </Box>
     </WidgetWrapper>

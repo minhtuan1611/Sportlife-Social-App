@@ -65,13 +65,10 @@ const Form = () => {
     }
     formData.append('picturePath', values.picture.name)
 
-    const savedUserResponse = await fetch(
-      `${REACT_APP_SERVER}}/auth/register`,
-      {
-        method: 'POST',
-        body: formData,
-      }
-    )
+    const savedUserResponse = await fetch(`${REACT_APP_SERVER}/auth/register`, {
+      method: 'POST',
+      body: formData,
+    })
     const savedUser = await savedUserResponse.json()
     onSubmitProps.resetForm()
 
