@@ -102,3 +102,37 @@ Ensure the `.env` file in the client folder includes:
 
 - New users cannot upload profile pictures from their local machine (missing avatar images)
 - Missing error page for incorrect login attempts
+
+## Project Task Log
+
+| Date      | Hours   | Task Description                                                     |
+| --------- | ------- | -------------------------------------------------------------------- |
+| 20.02.    | 2       | Brainstorm and initialize project.                                   |
+| 13.09.    | 2       | Install, import packages, and connect databases.                     |
+| 14.09.    | 6       | Implement authentication and authorization.                          |
+| 16.09.    | 8       | Develop routes for users and posts.                                  |
+| 18.09.    | 2       | Add mock users and posts for testing.                                |
+| 21.09.    | 5       | Initialize and set up frontend environment.                          |
+| 24.09.    | 15      | Create frontend infrastructure, theme, and navbar.                   |
+| 01.10.    | 10      | Design and implement login and register pages.                       |
+| 03.10.    | 4       | Implement widget wrapper, login logic, and navigation to login page. |
+| 04.10.    | 2       | Develop user widget and user image component.                        |
+| 05.10.    | 2       | Create homepage layout.                                              |
+| 12.10.    | 15      | Develop Ads, Post, Posts, User, and Users widgets.                   |
+| 14.10.    | 5       | Add friend and friend list widget functionality.                     |
+| 15.10.    | 2       | Design and implement profile page.                                   |
+| 17.10.    | 12      | Backend messaging feature implementation.                            |
+| 20.10.    | 15      | Add message feature on the frontend.                                 |
+| 22.10.    | 10      | Implement send/get messages, style improvements, and timestamps.     |
+| 23.10.    | 1       | Implement comment sections.                                          |
+| 24.10.    | 5       | UI improvements across the application.                              |
+| 26.10.    | 2       | Update URLs and devDependencies.                                     |
+| 27.10.    | 3       | Update user image and import paths.                                  |
+| 01.11.    | 3       | Deploy on Render and update README file.                             |
+| 03.11.    | 2       | Update dependencies, credentials, and component styles.              |
+| **Total** | **136** |                                                                      |
+
+The project was inspired by and references the following tutorials:
+
+- [Building a MERN Stack Application](https://www.youtube.com/watch?v=K8YELRmUb5o&t=254s)
+- [Deploying MERN Stack to Render](https://www.youtube.com/watch?v=HwCqsOis894)
