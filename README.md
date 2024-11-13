@@ -130,7 +130,7 @@ Ensure the `.env` file in the client folder includes:
 | 27.10.    | 3       | Update user image and import paths.                                  |
 | 01.11.    | 3       | Deploy on Render and update README file.                             |
 | 03.11.    | 2       | Update dependencies, credentials, and component styles.              |
-| **Total** | **136** |                                                                      |
+| **Total** | **133** |                                                                      |
 
 The project was inspired by and references the following tutorials:
 
