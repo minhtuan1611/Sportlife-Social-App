@@ -1,0 +1,45 @@
+name: Deploy Client Application
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build Docker Image
+        run: |
+          docker build -t minhtuanmn51/client-sportlife-app \
+            --build-arg REACT_APP_SERVER=${{ secrets.REACT_APP_SERVER }} \
+            -f client/Dockerfile client
+
+      - name: Push Docker Image
+        run: docker push minhtuanmn51/client-sportlife-app:latest
+
+  deploy:
+    needs: build
+    runs-on: self-hosted
+    steps:
+      - name: Pull Image from Docker Hub
+        run: docker pull minhtuanmn51/client-sportlife-app:latest
+
+      - name: Prune Docker Resources
+        run: |
+          docker container prune -f
+          docker image prune -f
+
+      - name: Delete Old Container
+        run: docker rm -f client-app-container || true
+
+      - name: Run Container
+        run: |
+          docker run -d -p 3000:80 --name client-app-container \
+            minhtuanmn51/client-sportlife-app:latest

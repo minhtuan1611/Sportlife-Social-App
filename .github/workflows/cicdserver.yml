@@ -1,0 +1,67 @@
+name: Deploy Server Application
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies
+        run: npm install
+        working-directory: ./server
+
+      - name: Run Tests
+        env:
+          PORT: ${{ secrets.PORT }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          MONGO_URL: ${{ secrets.MONGO_URL }}
+          MONGO_URL_TEST: ${{ secrets.MONGO_URL_TEST }}
+          REACT_APP_CLIENT_URL: ${{ secrets.REACT_APP_CLIENT_URL }}
+        run: npm run test
+        working-directory: ./server
+
+      - name: Login to Docker Hub
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build Docker Image
+        run: docker build -t minhtuanmn51/backend-sportlife-app -f server/Dockerfile server
+
+      - name: Push Docker Image
+        run: docker push minhtuanmn51/backend-sportlife-app:latest
+
+  deploy:
+    needs: build
+    runs-on: self-hosted
+    steps:
+      - name: Clean up Docker
+        run: |
+          docker container prune -f
+          docker image prune -f
+          docker volume prune -f
+
+      - name: Pull Image from Docker Hub
+        run: docker pull minhtuanmn51/backend-sportlife-app:latest
+
+      - name: Delete Old Container
+        run: docker rm -f server-app-container || true
+
+      - name: Run Container with Environment Variables
+        run: |
+          docker run -d -p 4000:4000 --name server-app-container \
+            -e MONGODB_URI_DEV=${{ secrets.MONGODB_URI_DEV }} \
+            -e TEST_MONGODB_URI=${{ secrets.TEST_MONGODB_URI }} \
+            -e PORT=${{ secrets.PORT }} \
+            -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
+            -e REACT_APP_CLIENT_URL=${{ secrets.REACT_APP_CLIENT_URL }} \
+            minhtuanmn51/backend-sportlife-app:latest
