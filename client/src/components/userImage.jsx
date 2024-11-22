@@ -1,8 +1,6 @@
 import PropTypes from 'prop-types'
 import { Box } from '@mui/material'
 
-const REACT_APP_SERVER = process.env.REACT_APP_SERVER
-
 const UserImage = ({ image, size }) => {
   return (
     <Box width={size} height={size}>
@@ -11,7 +9,7 @@ const UserImage = ({ image, size }) => {
         width={size}
         height={size}
         alt="user"
-        src={`${REACT_APP_SERVER}/assets/${image}`}
+        src={`${image}`}
       />
     </Box>
   )
