@@ -14,6 +14,7 @@ const ProfilePage = () => {
   const [user, setUser] = useState(null)
   const { userId } = useParams()
   const token = useSelector((state) => state.token)
+  const loggedInUserId = useSelector((state) => state.user?._id) // Assuming the logged-in user's ID is stored here
   const isNonMobileScreens = useMediaQuery('(min-width:1000px)')
 
   const getUser = async () => {
@@ -30,6 +31,8 @@ const ProfilePage = () => {
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!user) return null
+
+  const isUserProfile = userId === loggedInUserId
 
   return (
     <Box>
@@ -55,9 +58,9 @@ const ProfilePage = () => {
           flexBasis={isNonMobileScreens ? '42%' : undefined}
           mt={isNonMobileScreens ? undefined : '2rem'}
         >
-          <MyPostWidget picturePath={user.picturePath} />
+          {isUserProfile && <MyPostWidget picturePath={user.picturePath} />}
           <Box m="2rem 0" />
-          <PostsWidget userId={userId} isProfile />
+          <PostsWidget userId={userId} isProfile hideAddFriendButton />
         </Box>
       </Box>
     </Box>

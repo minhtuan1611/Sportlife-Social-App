@@ -7,10 +7,16 @@ import { setFriends } from 'state'
 import FlexBetween from './FlexBetween'
 import UserImage from './UserImage'
 
-const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
+const Friend = ({
+  friendId,
+  name,
+  subtitle,
+  userPicturePath,
+  hideAddButton, // Prop to control button visibility
+}) => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const { _id } = useSelector((state) => state.user)
+  const { _id } = useSelector((state) => state.user) // Logged-in user ID
   const token = useSelector((state) => state.token)
   const friends = useSelector((state) => state.user.friends)
 
@@ -42,7 +48,9 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
   return (
     <FlexBetween>
       <FlexBetween gap="1rem">
+        {/* User avatar */}
         <UserImage image={userPicturePath} size="55px" />
+        {/* User name and subtitle */}
         <Box
           onClick={() => {
             navigate(`/profile/${friendId}`)
@@ -67,16 +75,19 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
           </Typography>
         </Box>
       </FlexBetween>
-      <IconButton
-        onClick={() => patchFriend()}
-        sx={{ backgroundColor: primaryLight, p: '0.6rem' }}
-      >
-        {isFriend ? (
-          <PersonRemoveOutlined sx={{ color: primaryDark }} />
-        ) : (
-          <PersonAddOutlined sx={{ color: primaryDark }} />
-        )}
-      </IconButton>
+      {/* Conditionally render Add/Remove Friend button */}
+      {!hideAddButton && friendId !== _id && (
+        <IconButton
+          onClick={patchFriend}
+          sx={{ backgroundColor: primaryLight, p: '0.6rem' }}
+        >
+          {isFriend ? (
+            <PersonRemoveOutlined sx={{ color: primaryDark }} />
+          ) : (
+            <PersonAddOutlined sx={{ color: primaryDark }} />
+          )}
+        </IconButton>
+      )}
     </FlexBetween>
   )
 }
@@ -86,6 +97,7 @@ Friend.propTypes = {
   name: PropTypes.string.isRequired,
   subtitle: PropTypes.string.isRequired,
   userPicturePath: PropTypes.string.isRequired,
+  hideAddButton: PropTypes.bool,
 }
 
 export default Friend

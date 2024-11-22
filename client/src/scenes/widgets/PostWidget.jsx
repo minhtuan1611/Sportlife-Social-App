@@ -32,6 +32,7 @@ const PostWidget = ({
   userPicturePath,
   likes,
   comments,
+  hideAddFriendButton, // Add this prop
 }) => {
   const [isComments, setIsComments] = useState(false)
   const [newComment, setNewComment] = useState('')
@@ -82,6 +83,7 @@ const PostWidget = ({
         name={name}
         subtitle={location}
         userPicturePath={userPicturePath}
+        hideAddButton={hideAddFriendButton} // Respect the prop to hide the button
       />
       <Typography color={main} sx={{ mt: '1rem' }}>
         {description}
@@ -168,6 +170,7 @@ PostWidget.propTypes = {
   userPicturePath: PropTypes.string,
   likes: PropTypes.object,
   comments: PropTypes.any,
+  hideAddFriendButton: PropTypes.bool, // Ensure validation
 }
 
 export default PostWidget

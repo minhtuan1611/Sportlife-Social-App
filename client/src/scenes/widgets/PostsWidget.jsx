@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types' // Import PropTypes
+import PropTypes from 'prop-types'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { setPosts } from 'state'
@@ -6,7 +6,11 @@ import PostWidget from './PostWidget'
 
 const REACT_APP_SERVER = process.env.REACT_APP_SERVER
 
-const PostsWidget = ({ userId, isProfile = false }) => {
+const PostsWidget = ({
+  userId,
+  isProfile = false,
+  hideAddFriendButton = false,
+}) => {
   const dispatch = useDispatch()
   const posts = useSelector((state) => state.posts) || []
   const token = useSelector((state) => state.token)
@@ -79,6 +83,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
                 userPicturePath={userPicturePath}
                 likes={likes}
                 comments={comments}
+                hideAddFriendButton={hideAddFriendButton} // Pass the prop to PostWidget
               />
             )
           )}
@@ -86,10 +91,10 @@ const PostsWidget = ({ userId, isProfile = false }) => {
   )
 }
 
-// Add PropTypes for validation
 PostsWidget.propTypes = {
   userId: PropTypes.string,
   isProfile: PropTypes.bool,
+  hideAddFriendButton: PropTypes.bool, // Add the prop here
 }
 
 export default PostsWidget
