@@ -72,6 +72,7 @@ const MyPostWidget = ({ picturePath }) => {
             borderRadius: '2rem',
             padding: '1rem 2rem',
           }}
+          aria-label="Write your post here"
         />
       </FlexBetween>
       {isImage && (
@@ -94,9 +95,12 @@ const MyPostWidget = ({ picturePath }) => {
                   p="1rem"
                   width="100%"
                   sx={{ '&:hover': { cursor: 'pointer' } }}
+                  aria-label="Click to upload an image file"
                 >
-                  <input {...getInputProps()} />
-
+                  <input
+                    {...getInputProps()}
+                    aria-label="Upload an image file"
+                  />
                   {!image ? (
                     <p>Add Image Here</p>
                   ) : (
@@ -110,6 +114,7 @@ const MyPostWidget = ({ picturePath }) => {
                   <IconButton
                     onClick={() => setImage(null)}
                     sx={{ width: '15%' }}
+                    aria-label="Remove uploaded image"
                   >
                     <DeleteOutlined />
                   </IconButton>
@@ -124,10 +129,14 @@ const MyPostWidget = ({ picturePath }) => {
 
       <FlexBetween>
         <FlexBetween gap="0.25rem" onClick={() => setIsImage(!isImage)}>
-          <ImageOutlined sx={{ color: mediumMain }} />
+          <ImageOutlined
+            sx={{ color: mediumMain }}
+            aria-label="Toggle image upload section"
+          />
           <Typography
             color={mediumMain}
             sx={{ '&:hover': { cursor: 'pointer', color: medium } }}
+            aria-label="Click to toggle image upload section"
           >
             Image
           </Typography>
@@ -149,6 +158,7 @@ const MyPostWidget = ({ picturePath }) => {
             backgroundColor: palette.primary.main,
             borderRadius: '3rem',
           }}
+          aria-label="Post your status update"
         >
           POST
         </Button>
