@@ -1,4 +1,4 @@
-name: Deploy Client Application
+name: Deploy Client Application to Render
 
 on:
   push:
@@ -10,36 +10,34 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Source Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      - name: Login to Docker Hub
-        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
 
-      - name: Build Docker Image
-        run: |
-          docker build -t minhtuanmn51/client-sportlife-app \
-            --build-arg REACT_APP_SERVER=${{ secrets.REACT_APP_SERVER }} \
-            -f client/Dockerfile client
+      - name: Install Dependencies
+        working-directory: ./client
+        run: npm install
 
-      - name: Push Docker Image
-        run: docker push minhtuanmn51/client-sportlife-app:latest
+      - name: Build Client Application
+        working-directory: client
+        run: npm run build
 
   deploy:
     needs: build
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
-      - name: Pull Image from Docker Hub
-        run: docker pull minhtuanmn51/client-sportlife-app:latest
+      - name: Checkout Source Code
+        uses: actions/checkout@v3
 
-      - name: Prune Docker Resources
-        run: |
-          docker container prune -f
-          docker image prune -f
-
-      - name: Delete Old Container
-        run: docker rm -f client-app-container || true
-
-      - name: Run Container
-        run: |
-          docker run -d -p 3000:80 --name client-app-container \
-            minhtuanmn51/client-sportlife-app:latest
+    - name: Deploy to Render
+      env:
+        RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+        RENDER_SERVICE_ID: ${{ secrets.CLIENT_SERVICE_ID }}
+      run: |
+        curl -X POST "https://api.render.com/v1/services/${CLIENT_SERVICE_ID}/deploys" \
+          -H "Authorization: Bearer $RENDER_API_KEY" \
+          -H "Content-Type: application/json" \
+          --data '{"clearCache":false}'

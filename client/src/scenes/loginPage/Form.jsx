@@ -61,6 +61,7 @@ const Form = () => {
   const register = async (values, onSubmitProps) => {
     let imageUrl = ''
 
+    // Step 1: Handle image upload to Cloudinary
     if (values.picture) {
       const formData = new FormData()
       formData.append('file', values.picture)
@@ -71,36 +72,59 @@ const Form = () => {
           method: 'POST',
           body: formData,
         })
+
+        if (!response.ok) {
+          throw new Error(`Cloudinary upload failed: ${response.statusText}`)
+        }
+
         const data = await response.json()
         if (data.secure_url) {
           imageUrl = data.secure_url
         } else {
-          throw new Error('Failed to upload image to Cloudinary')
+          throw new Error(
+            'Failed to retrieve secure URL from Cloudinary response'
+          )
         }
       } catch (error) {
-        console.error('Error uploading to Cloudinary:', error)
-        return
+        console.error('Error uploading to Cloudinary:', error.message)
+        alert('Image upload failed. Please try again later.')
+        return // Stop further execution if image upload fails
       }
     }
 
+    // Step 2: Prepare the new user object
     const newUser = {
       ...values,
       picturePath: imageUrl,
     }
 
-    const savedUserResponse = await fetch(
-      `${process.env.REACT_APP_SERVER}/auth/register`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newUser),
-      }
-    )
-    const savedUser = await savedUserResponse.json()
-    onSubmitProps.resetForm()
+    // Step 3: Send the user data to your backend server
+    try {
+      const savedUserResponse = await fetch(
+        `${process.env.REACT_APP_SERVER}/auth/register`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newUser),
+        }
+      )
 
-    if (savedUser) {
-      setPageType('login')
+      if (!savedUserResponse.ok) {
+        const errorMessage = await savedUserResponse.text()
+        throw new Error(
+          `Registration failed: ${savedUserResponse.status} - ${errorMessage}`
+        )
+      }
+
+      const savedUser = await savedUserResponse.json()
+      onSubmitProps.resetForm()
+
+      if (savedUser) {
+        setPageType('login') // Navigate to the login page
+      }
+    } catch (error) {
+      console.error('Error registering user:', error.message)
+      alert('Registration failed. Please check your details and try again.')
     }
   }
 
