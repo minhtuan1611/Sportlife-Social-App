@@ -16,7 +16,8 @@ import { setLogin } from 'state'
 import Dropzone from 'react-dropzone'
 import FlexBetween from 'components/FlexBetween'
 
-const REACT_APP_SERVER = process.env.REACT_APP_SERVER
+const CLOUDINARY_URL = process.env.REACT_APP_CLOUDINARY_URL
+const CLOUDINARY_UPLOAD_PRESET = process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET
 
 const registerSchema = yup.object().shape({
   firstName: yup.string().required('required'),
@@ -25,7 +26,7 @@ const registerSchema = yup.object().shape({
   password: yup.string().required('required'),
   location: yup.string().required('required'),
   occupation: yup.string().required('required'),
-  picture: yup.string().required('required'),
+  picture: yup.mixed().required('required'),
 })
 
 const loginSchema = yup.object().shape({
@@ -40,7 +41,7 @@ const initialValuesRegister = {
   password: '',
   location: '',
   occupation: '',
-  picture: '',
+  picture: null,
 }
 
 const initialValuesLogin = {
@@ -58,16 +59,43 @@ const Form = () => {
   const isRegister = pageType === 'register'
 
   const register = async (values, onSubmitProps) => {
-    const formData = new FormData()
-    for (let value in values) {
-      formData.append(value, values[value])
-    }
-    formData.append('picturePath', values.picture.name)
+    let imageUrl = ''
 
-    const savedUserResponse = await fetch(`${REACT_APP_SERVER}/auth/register`, {
-      method: 'POST',
-      body: formData,
-    })
+    if (values.picture) {
+      const formData = new FormData()
+      formData.append('file', values.picture)
+      formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET)
+
+      try {
+        const response = await fetch(CLOUDINARY_URL, {
+          method: 'POST',
+          body: formData,
+        })
+        const data = await response.json()
+        if (data.secure_url) {
+          imageUrl = data.secure_url
+        } else {
+          throw new Error('Failed to upload image to Cloudinary')
+        }
+      } catch (error) {
+        console.error('Error uploading to Cloudinary:', error)
+        return
+      }
+    }
+
+    const newUser = {
+      ...values,
+      picturePath: imageUrl,
+    }
+
+    const savedUserResponse = await fetch(
+      `${process.env.REACT_APP_SERVER}/auth/register`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newUser),
+      }
+    )
     const savedUser = await savedUserResponse.json()
     onSubmitProps.resetForm()
 
@@ -77,11 +105,14 @@ const Form = () => {
   }
 
   const login = async (values, onSubmitProps) => {
-    const loggedInResponse = await fetch(`${REACT_APP_SERVER}/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(values),
-    })
+    const loggedInResponse = await fetch(
+      `${process.env.REACT_APP_SERVER}/auth/login`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(values),
+      }
+    )
     const loggedIn = await loggedInResponse.json()
     onSubmitProps.resetForm()
     if (loggedIn) {
@@ -129,7 +160,6 @@ const Form = () => {
               <>
                 <TextField
                   label="First Name"
-                  aria-label="First Name"
                   onBlur={handleBlur}
                   onChange={handleChange}
                   value={values.firstName}
@@ -142,7 +172,6 @@ const Form = () => {
                 />
                 <TextField
                   label="Last Name"
-                  aria-label="Last Name"
                   onBlur={handleBlur}
                   onChange={handleChange}
                   value={values.lastName}
@@ -153,7 +182,6 @@ const Form = () => {
                 />
                 <TextField
                   label="Location"
-                  aria-label="Location"
                   onBlur={handleBlur}
                   onChange={handleChange}
                   value={values.location}
@@ -164,7 +192,6 @@ const Form = () => {
                 />
                 <TextField
                   label="Occupation"
-                  aria-label="Occupation"
                   onBlur={handleBlur}
                   onChange={handleChange}
                   value={values.occupation}
@@ -194,11 +221,10 @@ const Form = () => {
                         border={`2px dashed ${palette.primary.main}`}
                         p="1rem"
                         sx={{ '&:hover': { cursor: 'pointer' } }}
-                        aria-label="Picture Upload Zone"
                       >
                         <input
                           {...getInputProps()}
-                          aria-label="Picture Upload Input"
+                          aria-label="Upload Picture"
                         />
                         {!values.picture ? (
                           <p>Add Picture Here</p>
@@ -217,7 +243,6 @@ const Form = () => {
 
             <TextField
               label="Email"
-              aria-label="Email"
               onBlur={handleBlur}
               onChange={handleChange}
               value={values.email}
@@ -228,7 +253,6 @@ const Form = () => {
             />
             <TextField
               label="Password"
-              aria-label="Password"
               type="password"
               onBlur={handleBlur}
               onChange={handleChange}
@@ -267,10 +291,9 @@ const Form = () => {
                   color: palette.primary.light,
                 },
               }}
-              aria-label="Switch between login and register"
             >
               {isLogin
-                ? "Don't have an account? Sign Up!."
+                ? "Don't have an account? Sign Up!"
                 : 'Already have an account? Login here.'}
             </Typography>
           </Box>
