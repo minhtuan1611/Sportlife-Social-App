@@ -58,7 +58,6 @@ const Form = () => {
   const isRegister = pageType === 'register'
 
   const register = async (values, onSubmitProps) => {
-    // this allows us to send form info with image
     const formData = new FormData()
     for (let value in values) {
       formData.append(value, values[value])
@@ -130,6 +129,7 @@ const Form = () => {
               <>
                 <TextField
                   label="First Name"
+                  aria-label="First Name"
                   onBlur={handleBlur}
                   onChange={handleChange}
                   value={values.firstName}
@@ -142,6 +142,7 @@ const Form = () => {
                 />
                 <TextField
                   label="Last Name"
+                  aria-label="Last Name"
                   onBlur={handleBlur}
                   onChange={handleChange}
                   value={values.lastName}
@@ -152,6 +153,7 @@ const Form = () => {
                 />
                 <TextField
                   label="Location"
+                  aria-label="Location"
                   onBlur={handleBlur}
                   onChange={handleChange}
                   value={values.location}
@@ -162,6 +164,7 @@ const Form = () => {
                 />
                 <TextField
                   label="Occupation"
+                  aria-label="Occupation"
                   onBlur={handleBlur}
                   onChange={handleChange}
                   value={values.occupation}
@@ -191,8 +194,12 @@ const Form = () => {
                         border={`2px dashed ${palette.primary.main}`}
                         p="1rem"
                         sx={{ '&:hover': { cursor: 'pointer' } }}
+                        aria-label="Picture Upload Zone"
                       >
-                        <input {...getInputProps()} />
+                        <input
+                          {...getInputProps()}
+                          aria-label="Picture Upload Input"
+                        />
                         {!values.picture ? (
                           <p>Add Picture Here</p>
                         ) : (
@@ -210,6 +217,7 @@ const Form = () => {
 
             <TextField
               label="Email"
+              aria-label="Email"
               onBlur={handleBlur}
               onChange={handleChange}
               value={values.email}
@@ -220,6 +228,7 @@ const Form = () => {
             />
             <TextField
               label="Password"
+              aria-label="Password"
               type="password"
               onBlur={handleBlur}
               onChange={handleChange}
@@ -231,7 +240,6 @@ const Form = () => {
             />
           </Box>
 
-          {/* BUTTONS */}
           <Box>
             <Button
               fullWidth
@@ -259,6 +267,7 @@ const Form = () => {
                   color: palette.primary.light,
                 },
               }}
+              aria-label="Switch between login and register"
             >
               {isLogin
                 ? "Don't have an account? Sign Up!."

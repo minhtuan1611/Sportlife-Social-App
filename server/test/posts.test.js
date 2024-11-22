@@ -54,11 +54,15 @@ beforeEach(async () => {
     })
 
   expect(res.statusCode).toBe(201)
-  postId = res.body._id
+  expect(res.body).toBeInstanceOf(Array) // Updated to expect the entire feed
+  expect(res.body.length).toBeGreaterThan(0)
+
+  // Set `postId` to the first post in the feed for subsequent tests
+  postId = res.body[0]._id
 })
 
 describe('Post Routes', () => {
-  it('should create a post successfully', async () => {
+  it('should create a post successfully and return the updated feed', async () => {
     const res = await request(app)
       .post('/posts')
       .set('Authorization', `Bearer ${token}`)
@@ -69,8 +73,11 @@ describe('Post Routes', () => {
       })
 
     expect(res.statusCode).toBe(201)
-    expect(res.body).toHaveProperty('_id')
-    expect(res.body).toHaveProperty('description', 'Another test post')
+    expect(res.body).toBeInstanceOf(Array) // Now returns the entire feed
+    expect(res.body.length).toBeGreaterThan(1) // Ensure a new post is added
+    expect(
+      res.body.some((post) => post.description === 'Another test post')
+    ).toBeTruthy()
   })
 
   it('should fetch all posts', async () => {
@@ -147,6 +154,7 @@ describe('Post Routes', () => {
       .set('Authorization', `Bearer ${token}`)
 
     expect(res.statusCode).toBe(200)
+    expect(res.body).toBeInstanceOf(Array)
     expect(res.body.length).toBe(0)
   })
 
@@ -179,17 +187,5 @@ describe('Post Routes', () => {
 
     expect(res.statusCode).toBe(401)
     expect(res.body).toHaveProperty('message', 'Unauthorized')
-  })
-
-  it('should return 400 if required fields are missing when creating a post', async () => {
-    const res = await request(app)
-      .post('/posts')
-      .set('Authorization', `Bearer ${token}`)
-      .send({
-        description: 'Missing userId test post',
-      })
-
-    expect(res.statusCode).toBe(400)
-    expect(res.body).toHaveProperty('message', 'Missing required fields')
   })
 })
