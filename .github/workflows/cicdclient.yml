@@ -32,9 +32,9 @@ jobs:
       - name: Checkout Source Code
         uses: actions/checkout@v3
 
-    - name: Deploy to Render
-      env:
-        CLIENT_RENDER_API_KEY: ${{ secrets.CLIENT_RENDER_API_KEY }}
-        CLIENT_SERVICE_ID: ${{ secrets.CLIENT_SERVICE_ID }}
-      run: |
-        curl https://api.render.com/deploy/${{secrets.CLIENT_SERVICE_ID}}?key=${{secrets.CLIENT_RENDER_API_KEY}}
+      - name: Deploy to Render
+        env:
+          CLIENT_RENDER_API_KEY: ${{ secrets.CLIENT_RENDER_API_KEY }}
+          CLIENT_SERVICE_ID: ${{ secrets.CLIENT_SERVICE_ID }}
+        run: |
+          curl -X POST https://api.render.com/deploy/${{ secrets.CLIENT_SERVICE_ID }}?key=${{ secrets.CLIENT_RENDER_API_KEY }}
