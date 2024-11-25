@@ -42,4 +42,4 @@ jobs:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
           SERVER_SERVICE_ID: ${{ secrets.SERVER_SERVICE_ID }}
         run: |
-          curl https://api.render.com/deploy/${{SERVER_SERVICE_ID}}?key=${{RENDER_API_KEY}}
+          curl https://api.render.com/deploy/${{secrets.SERVER_SERVICE_ID}}?key=${{secrets.RENDER_API_KEY}}
