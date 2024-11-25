@@ -7,11 +7,6 @@ export const createPost = async (req, res) => {
   try {
     const { userId, description, picturePath } = req.body
 
-    // Validate required fields
-    if (!userId || !description || !picturePath) {
-      return res.status(400).json({ message: 'Missing required fields' })
-    }
-
     // Validate userId
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(404).json({ message: 'User not found' })
@@ -35,7 +30,7 @@ export const createPost = async (req, res) => {
     })
 
     await newPost.save()
-    res.status(201).json(newPost)
+    res.status(201).json(await Post.find())
   } catch (err) {
     console.error('Error in createPost:', err.message)
     res.status(500).json({ message: err.message })

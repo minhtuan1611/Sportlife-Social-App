@@ -16,21 +16,22 @@ import {
 } from '@mui/material'
 import Dropzone from 'react-dropzone'
 import { useState } from 'react'
+import PropTypes from 'prop-types'
 import { useDispatch, useSelector } from 'react-redux'
 import { setPosts } from 'state'
-
 import WidgetWrapper from 'components/WidgetWrapper'
 import FlexBetween from '../../components/FlexBetween'
 import UserImage from '../../components/UserImage'
 
-const REACT_APP_SERVER = process.env.REACT_APP_SERVER
+const CLOUDINARY_URL = process.env.REACT_APP_CLOUDINARY_URL
+const CLOUDINARY_UPLOAD_PRESET = process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET
 
-// eslint-disable-next-line react/prop-types
 const MyPostWidget = ({ picturePath }) => {
   const dispatch = useDispatch()
   const [isImage, setIsImage] = useState(false)
   const [image, setImage] = useState(null)
   const [post, setPost] = useState('')
+
   const { palette } = useTheme()
   const { _id } = useSelector((state) => state.user)
   const token = useSelector((state) => state.token)
@@ -39,23 +40,54 @@ const MyPostWidget = ({ picturePath }) => {
   const medium = palette.neutral.medium
 
   const handlePost = async () => {
-    const formData = new FormData()
-    formData.append('userId', _id)
-    formData.append('description', post)
+    let imageUrl = ''
     if (image) {
-      formData.append('picture', image)
-      formData.append('picturePath', image.name)
+      const formData = new FormData()
+      formData.append('file', image)
+      formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET)
+
+      try {
+        const response = await fetch(CLOUDINARY_URL, {
+          method: 'POST',
+          body: formData,
+        })
+        const data = await response.json()
+        if (data.secure_url) {
+          imageUrl = data.secure_url
+          console.log('Image uploaded to Cloudinary:', imageUrl)
+        } else {
+          throw new Error('Failed to retrieve image URL')
+        }
+      } catch (error) {
+        console.error('Error uploading to Cloudinary:', error)
+        return // Exit if upload fails
+      }
     }
 
-    const response = await fetch(`${REACT_APP_SERVER}/posts`, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${token}` },
-      body: formData,
-    })
-    const posts = await response.json()
-    dispatch(setPosts({ posts }))
-    setImage(null)
-    setPost('')
+    const postData = {
+      userId: _id,
+      description: post,
+      picturePath: imageUrl,
+      userPicturePath: picturePath,
+    }
+
+    try {
+      const response = await fetch(`${process.env.REACT_APP_SERVER}/posts`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(postData),
+      })
+      const posts = await response.json()
+      dispatch(setPosts({ posts }))
+      setImage(null)
+      setPost('')
+
+    } catch (error) {
+      console.error('Error creating post:', error)
+    }
   }
 
   return (
@@ -72,6 +104,7 @@ const MyPostWidget = ({ picturePath }) => {
             borderRadius: '2rem',
             padding: '1rem 2rem',
           }}
+          aria-label="Write your post here"
         />
       </FlexBetween>
       {isImage && (
@@ -94,9 +127,12 @@ const MyPostWidget = ({ picturePath }) => {
                   p="1rem"
                   width="100%"
                   sx={{ '&:hover': { cursor: 'pointer' } }}
+                  aria-label="Click to upload an image file"
                 >
-                  <input {...getInputProps()} />
-
+                  <input
+                    {...getInputProps()}
+                    aria-label="Upload an image file"
+                  />
                   {!image ? (
                     <p>Add Image Here</p>
                   ) : (
@@ -110,6 +146,7 @@ const MyPostWidget = ({ picturePath }) => {
                   <IconButton
                     onClick={() => setImage(null)}
                     sx={{ width: '15%' }}
+                    aria-label="Remove uploaded image"
                   >
                     <DeleteOutlined />
                   </IconButton>
@@ -124,10 +161,14 @@ const MyPostWidget = ({ picturePath }) => {
 
       <FlexBetween>
         <FlexBetween gap="0.25rem" onClick={() => setIsImage(!isImage)}>
-          <ImageOutlined sx={{ color: mediumMain }} />
+          <ImageOutlined
+            sx={{ color: mediumMain }}
+            aria-label="Toggle image upload section"
+          />
           <Typography
             color={mediumMain}
             sx={{ '&:hover': { cursor: 'pointer', color: medium } }}
+            aria-label="Click to toggle image upload section"
           >
             Image
           </Typography>
@@ -149,12 +190,17 @@ const MyPostWidget = ({ picturePath }) => {
             backgroundColor: palette.primary.main,
             borderRadius: '3rem',
           }}
+          aria-label="Post your status update"
         >
           POST
         </Button>
       </FlexBetween>
     </WidgetWrapper>
   )
+}
+
+MyPostWidget.propTypes = {
+  picturePath: PropTypes.string.isRequired,
 }
 
 export default MyPostWidget

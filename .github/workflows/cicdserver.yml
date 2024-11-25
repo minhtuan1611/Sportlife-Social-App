@@ -1,4 +1,4 @@
-name: Deploy Server Application
+name: Deploy Server Application to Render
 
 on:
   push:
@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Source Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -18,50 +18,31 @@ jobs:
           node-version: '20'
 
       - name: Install Dependencies
-        run: npm install
         working-directory: ./server
+        run: npm install
 
       - name: Run Tests
+        working-directory: ./server
         env:
           PORT: ${{ secrets.PORT }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           MONGO_URL: ${{ secrets.MONGO_URL }}
           MONGO_URL_TEST: ${{ secrets.MONGO_URL_TEST }}
-          REACT_APP_CLIENT_URL: ${{ secrets.REACT_APP_CLIENT_URL }}
         run: npm run test
-        working-directory: ./server
-
-      - name: Login to Docker Hub
-        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Build Docker Image
-        run: docker build -t minhtuanmn51/backend-sportlife-app -f server/Dockerfile server
-
-      - name: Push Docker Image
-        run: docker push minhtuanmn51/backend-sportlife-app:latest
 
   deploy:
     needs: build
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
-      - name: Clean up Docker
-        run: |
-          docker container prune -f
-          docker image prune -f
-          docker volume prune -f
+      - name: Checkout Source Code
+        uses: actions/checkout@v3
 
-      - name: Pull Image from Docker Hub
-        run: docker pull minhtuanmn51/backend-sportlife-app:latest
-
-      - name: Delete Old Container
-        run: docker rm -f server-app-container || true
-
-      - name: Run Container with Environment Variables
-        run: |
-          docker run -d -p 4000:4000 --name server-app-container \
-            -e MONGODB_URI_DEV=${{ secrets.MONGODB_URI_DEV }} \
-            -e TEST_MONGODB_URI=${{ secrets.TEST_MONGODB_URI }} \
-            -e PORT=${{ secrets.PORT }} \
-            -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
-            -e REACT_APP_CLIENT_URL=${{ secrets.REACT_APP_CLIENT_URL }} \
-            minhtuanmn51/backend-sportlife-app:latest
+     - name: Deploy to Render
+      env:
+        RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+        RENDER_SERVICE_ID: ${{ secrets.SERVER_SERVICE_ID }}
+      run: |
+        curl -X POST "https://api.render.com/v1/services/${SERVER_SERVICE_ID}/deploys" \
+          -H "Authorization: Bearer $RENDER_API_KEY" \
+          -H "Content-Type: application/json" \
+          --data '{"clearCache":false}'

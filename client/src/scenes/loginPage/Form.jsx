@@ -16,7 +16,8 @@ import { setLogin } from 'state'
 import Dropzone from 'react-dropzone'
 import FlexBetween from 'components/FlexBetween'
 
-const REACT_APP_SERVER = process.env.REACT_APP_SERVER
+const CLOUDINARY_URL = process.env.REACT_APP_CLOUDINARY_URL
+const CLOUDINARY_UPLOAD_PRESET = process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET
 
 const registerSchema = yup.object().shape({
   firstName: yup.string().required('required'),
@@ -25,7 +26,7 @@ const registerSchema = yup.object().shape({
   password: yup.string().required('required'),
   location: yup.string().required('required'),
   occupation: yup.string().required('required'),
-  picture: yup.string().required('required'),
+  picture: yup.mixed().required('required'),
 })
 
 const loginSchema = yup.object().shape({
@@ -40,7 +41,7 @@ const initialValuesRegister = {
   password: '',
   location: '',
   occupation: '',
-  picture: '',
+  picture: null,
 }
 
 const initialValuesLogin = {
@@ -58,31 +59,84 @@ const Form = () => {
   const isRegister = pageType === 'register'
 
   const register = async (values, onSubmitProps) => {
-    // this allows us to send form info with image
-    const formData = new FormData()
-    for (let value in values) {
-      formData.append(value, values[value])
+    let imageUrl = ''
+
+    // Step 1: Handle image upload to Cloudinary
+    if (values.picture) {
+      const formData = new FormData()
+      formData.append('file', values.picture)
+      formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET)
+
+      try {
+        const response = await fetch(CLOUDINARY_URL, {
+          method: 'POST',
+          body: formData,
+        })
+
+        if (!response.ok) {
+          throw new Error(`Cloudinary upload failed: ${response.statusText}`)
+        }
+
+        const data = await response.json()
+        if (data.secure_url) {
+          imageUrl = data.secure_url
+        } else {
+          throw new Error(
+            'Failed to retrieve secure URL from Cloudinary response'
+          )
+        }
+      } catch (error) {
+        console.error('Error uploading to Cloudinary:', error.message)
+        alert('Image upload failed. Please try again later.')
+        return // Stop further execution if image upload fails
+      }
     }
-    formData.append('picturePath', values.picture.name)
 
-    const savedUserResponse = await fetch(`${REACT_APP_SERVER}/auth/register`, {
-      method: 'POST',
-      body: formData,
-    })
-    const savedUser = await savedUserResponse.json()
-    onSubmitProps.resetForm()
+    // Step 2: Prepare the new user object
+    const newUser = {
+      ...values,
+      picturePath: imageUrl,
+    }
 
-    if (savedUser) {
-      setPageType('login')
+    // Step 3: Send the user data to your backend server
+    try {
+      const savedUserResponse = await fetch(
+        `${process.env.REACT_APP_SERVER}/auth/register`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newUser),
+        }
+      )
+
+      if (!savedUserResponse.ok) {
+        const errorMessage = await savedUserResponse.text()
+        throw new Error(
+          `Registration failed: ${savedUserResponse.status} - ${errorMessage}`
+        )
+      }
+
+      const savedUser = await savedUserResponse.json()
+      onSubmitProps.resetForm()
+
+      if (savedUser) {
+        setPageType('login') // Navigate to the login page
+      }
+    } catch (error) {
+      console.error('Error registering user:', error.message)
+      alert('Registration failed. Please check your details and try again.')
     }
   }
 
   const login = async (values, onSubmitProps) => {
-    const loggedInResponse = await fetch(`${REACT_APP_SERVER}/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(values),
-    })
+    const loggedInResponse = await fetch(
+      `${process.env.REACT_APP_SERVER}/auth/login`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(values),
+      }
+    )
     const loggedIn = await loggedInResponse.json()
     onSubmitProps.resetForm()
     if (loggedIn) {
@@ -192,7 +246,10 @@ const Form = () => {
                         p="1rem"
                         sx={{ '&:hover': { cursor: 'pointer' } }}
                       >
-                        <input {...getInputProps()} />
+                        <input
+                          {...getInputProps()}
+                          aria-label="Upload Picture"
+                        />
                         {!values.picture ? (
                           <p>Add Picture Here</p>
                         ) : (
@@ -231,7 +288,6 @@ const Form = () => {
             />
           </Box>
 
-          {/* BUTTONS */}
           <Box>
             <Button
               fullWidth
@@ -261,7 +317,7 @@ const Form = () => {
               }}
             >
               {isLogin
-                ? "Don't have an account? Sign Up!."
+                ? "Don't have an account? Sign Up!"
                 : 'Already have an account? Login here.'}
             </Typography>
           </Box>

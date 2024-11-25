@@ -32,6 +32,7 @@ const PostWidget = ({
   userPicturePath,
   likes,
   comments,
+  hideAddFriendButton, // Add this prop
 }) => {
   const [isComments, setIsComments] = useState(false)
   const [newComment, setNewComment] = useState('')
@@ -82,6 +83,7 @@ const PostWidget = ({
         name={name}
         subtitle={location}
         userPicturePath={userPicturePath}
+        hideAddButton={hideAddFriendButton} // Respect the prop to hide the button
       />
       <Typography color={main} sx={{ mt: '1rem' }}>
         {description}
@@ -92,7 +94,7 @@ const PostWidget = ({
           height="auto"
           alt="post"
           style={{ borderRadius: '0.75rem', marginTop: '0.75rem' }}
-          src={`${REACT_APP_SERVER}/assets/${picturePath}`}
+          src={picturePath}
         />
       )}
       <FlexBetween mt="0.25rem">
@@ -168,6 +170,7 @@ PostWidget.propTypes = {
   userPicturePath: PropTypes.string,
   likes: PropTypes.object,
   comments: PropTypes.any,
+  hideAddFriendButton: PropTypes.bool, // Ensure validation
 }
 
 export default PostWidget
