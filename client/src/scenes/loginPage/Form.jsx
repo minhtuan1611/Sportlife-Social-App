@@ -6,6 +6,7 @@ import {
   useMediaQuery,
   Typography,
   useTheme,
+  CircularProgress,
 } from '@mui/material'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import { Formik } from 'formik'
@@ -19,6 +20,7 @@ import FlexBetween from 'components/FlexBetween'
 const CLOUDINARY_URL = process.env.REACT_APP_CLOUDINARY_URL
 const CLOUDINARY_UPLOAD_PRESET = process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET
 
+// Validation schemas
 const registerSchema = yup.object().shape({
   firstName: yup.string().required('required'),
   lastName: yup.string().required('required'),
@@ -34,6 +36,7 @@ const loginSchema = yup.object().shape({
   password: yup.string().required('required'),
 })
 
+// Initial form values
 const initialValuesRegister = {
   firstName: '',
   lastName: '',
@@ -51,6 +54,8 @@ const initialValuesLogin = {
 
 const Form = () => {
   const [pageType, setPageType] = useState('login')
+  const [isLoading, setIsLoading] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
   const { palette } = useTheme()
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -58,49 +63,35 @@ const Form = () => {
   const isLogin = pageType === 'login'
   const isRegister = pageType === 'register'
 
+  const uploadImageToCloudinary = async (picture) => {
+    const formData = new FormData()
+    formData.append('file', picture)
+    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET)
+
+    const response = await fetch(CLOUDINARY_URL, {
+      method: 'POST',
+      body: formData,
+    })
+
+    if (!response.ok) {
+      throw new Error(`Cloudinary upload failed: ${response.statusText}`)
+    }
+
+    const data = await response.json()
+    return data.secure_url
+  }
+
   const register = async (values, onSubmitProps) => {
-    let imageUrl = ''
-
-    // Step 1: Handle image upload to Cloudinary
-    if (values.picture) {
-      const formData = new FormData()
-      formData.append('file', values.picture)
-      formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET)
-
-      try {
-        const response = await fetch(CLOUDINARY_URL, {
-          method: 'POST',
-          body: formData,
-        })
-
-        if (!response.ok) {
-          throw new Error(`Cloudinary upload failed: ${response.statusText}`)
-        }
-
-        const data = await response.json()
-        if (data.secure_url) {
-          imageUrl = data.secure_url
-        } else {
-          throw new Error(
-            'Failed to retrieve secure URL from Cloudinary response'
-          )
-        }
-      } catch (error) {
-        console.error('Error uploading to Cloudinary:', error.message)
-        alert('Image upload failed. Please try again later.')
-        return // Stop further execution if image upload fails
-      }
-    }
-
-    // Step 2: Prepare the new user object
-    const newUser = {
-      ...values,
-      picturePath: imageUrl,
-    }
-
-    // Step 3: Send the user data to your backend server
+    setIsLoading(true)
+    setErrorMessage('')
     try {
-      const savedUserResponse = await fetch(
+      let imageUrl = ''
+      if (values.picture) {
+        imageUrl = await uploadImageToCloudinary(values.picture)
+      }
+
+      const newUser = { ...values, picturePath: imageUrl }
+      const response = await fetch(
         `${process.env.REACT_APP_SERVER}/auth/register`,
         {
           method: 'POST',
@@ -109,44 +100,46 @@ const Form = () => {
         }
       )
 
-      if (!savedUserResponse.ok) {
-        const errorMessage = await savedUserResponse.text()
-        throw new Error(
-          `Registration failed: ${savedUserResponse.status} - ${errorMessage}`
-        )
+      if (!response.ok) {
+        const errorText = await response.text()
+        throw new Error(`Registration failed: ${errorText}`)
       }
 
-      const savedUser = await savedUserResponse.json()
       onSubmitProps.resetForm()
-
-      if (savedUser) {
-        setPageType('login') // Navigate to the login page
-      }
+      setPageType('login') // Switch to login page
     } catch (error) {
-      console.error('Error registering user:', error.message)
-      alert('Registration failed. Please check your details and try again.')
+      setErrorMessage(error.message || 'Registration failed.')
+    } finally {
+      setIsLoading(false)
     }
   }
 
   const login = async (values, onSubmitProps) => {
-    const loggedInResponse = await fetch(
-      `${process.env.REACT_APP_SERVER}/auth/login`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(values),
-      }
-    )
-    const loggedIn = await loggedInResponse.json()
-    onSubmitProps.resetForm()
-    if (loggedIn) {
-      dispatch(
-        setLogin({
-          user: loggedIn.user,
-          token: loggedIn.token,
-        })
+    setIsLoading(true)
+    setErrorMessage('')
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_SERVER}/auth/login`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(values),
+        }
       )
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        throw new Error(`Login failed: ${errorText}`)
+      }
+
+      const data = await response.json()
+      dispatch(setLogin({ user: data.user, token: data.token }))
+      onSubmitProps.resetForm()
       navigate('/home')
+    } catch (error) {
+      setErrorMessage(error.message || 'Login failed.')
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -288,10 +281,17 @@ const Form = () => {
             />
           </Box>
 
+          {errorMessage && (
+            <Typography color="error" sx={{ mt: 2 }}>
+              {errorMessage}
+            </Typography>
+          )}
+
           <Box>
             <Button
               fullWidth
               type="submit"
+              disabled={isLoading}
               sx={{
                 m: '2rem 0',
                 p: '1rem',
@@ -300,7 +300,13 @@ const Form = () => {
                 '&:hover': { color: palette.primary.main },
               }}
             >
-              {isLogin ? 'LOGIN' : 'REGISTER'}
+              {isLoading ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : isLogin ? (
+                'LOGIN'
+              ) : (
+                'REGISTER'
+              )}
             </Button>
             <Typography
               onClick={() => {
